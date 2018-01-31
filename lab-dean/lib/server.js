@@ -8,7 +8,7 @@ const errorHandler = require('./error-handler');
 //Application setup
 const app = express();
 const router = express.Router();
-app.use('api/v1/note', router);
+app.use('/api/v1', router);
 app.use(cors());
 
 //Route setup
