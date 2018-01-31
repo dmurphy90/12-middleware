@@ -1,34 +1,23 @@
-![cf](https://i.imgur.com/7v5ASc8.png) 12: Express Middleware
-======
+# 11 Express
 
-## Submission Instructions
-  * fork this repository & create a new branch for your work
-  * write all of your code in a directory named `lab-` + `<your name>` **e.g.** `lab-susan`
-  * push to your repository
-  * submit a pull request to this repository
-  * submit a link to your PR in canvas
-  * write a question and observation on canvas
+## Installation 
+To get started fork then clone this repository to your machine, then navigate to the folder ```lab-dean```. Type ```npm install``` to install the dependencies needed. Then I recommend acquiring the program HTTPie to run the commands.
 
-## Learning Objectives
-* students will be able to work with application, router, and 3rd party middleware through the use of express.js
-* students will be able to implement custom middleware through the use of express.js
-* students will be able to create custom routers for a specific resource
+## Functionality
 
-## Requirements
+This is the back-end for a note making APP using express to make CRUD requests. There are 5 functions usable within this app.
 
-#### Configuration
-* `package.json`
-* `.eslintrc`
-* `.gitignore`
-* `README.md`
-  * your `README.md` should include detailed instructions on how to use your API
+* ```POST "api/v1/note``` Requires title and content values to create a new Note object. An example command on HTTPie would be.
+```http POST http://localhost:3000/api/v1/note title="hello" content="tim"```
 
-#### Feature Tasks
-* Complete the test suite for your API, including all request methods and any error handling potentialities.
-* Integration test each request method for your resource, including successful and unsuccessful scenarios.
-    - Ensure that you've covered differential outcomes for 400 vs 404
-* Unit test the following modules:
-    1. `model/note.js`
-    2. `lib/error-handler.js`
-    3. `lib/storage.js`
-    - Ensure that your unit tests are not dependant on any other functionality within the app. Each method should have input/output dedicated to the focus of the test.
+* ```GET "api/v1/note``` This will get you every Note object saved into the server. To do this you simply type:
+```http http://localhost:3000/api/v1/note```
+
+* ```GET "api/v1/note/:_id``` When the ```id``` parameter in the link is filled in with the ID of an actual note object it will retrieve you that specific entry. An example: 
+```http http://localhost:3000/api/v1/note/12345_6789_1234_56789```
+
+* ```PUT "api/v1/note/:_id``` When the ```id``` parameter in the link is filled in with the ID of an actual note object it will update the item associated with the typed in ID. An example command:
+```http PUT http://localhost:3000/api/v1/note/12345_6789_1234_56789 title="goodbye" content="tim"```
+
+* ```DELETE "api/v1/note/:_id``` When the ```id``` parameter in the link is filled in with the ID of an actual note object it will delete the item associated with the typed in ID. Example command:
+```http DELETE http://localhost:3000/api/v1/note/12345_6789_1234_56789```
