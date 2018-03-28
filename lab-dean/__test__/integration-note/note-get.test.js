@@ -1,29 +1,60 @@
 'use strict';
 
-const server = require('../../lib/server');
+const server = require('../../lib/server.js');
 const superagent = require('superagent');
 require('jest');
 
-describe('Route Testing', function() {
-  this.mockNote = {title: 'hello', content: 'tim'};
-
+describe('GET', function() {
+  this.mockOne = {title: 'hello', content: 'hello world'};
+  this.mockTwo = {title: 'two', content: 'hello again'};
   beforeAll(() => server.start(process.env.PORT, () => console.log(`Listening on ${process.env.PORT}`)));
   afterAll(() => server.stop());
 
-  describe('GET api/v1/note', () => {
+  describe('Valid request and response', () => {
     beforeAll(() => {
       return superagent.post(':4000/api/v1/note')
-        .send(this.mockNote);
+        .send(this.mockOne)
+        .then(res => {
+          this.resOne = res;
+          return superagent.post(':4000/api/v1/note')
+            .send(this.mockTwo)
+            .then(res => this.resTwo = res);
+        });
     });
 
-    describe('Valid Requests', () => {
-      beforeAll(() => {
-        return superagent.get(':4000/api/v1/note')
-          .then(res => this.reponse = res);
+    beforeAll(() => {
+      return superagent.get(':4000/api/v1/note')
+        .then(res => this.getOne = res);
+    });
+    
+    it('should return an array of ids', () => {
+      this.getOne.body.map(id => {
+        expect(id).toMatch(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
       });
-      it('Should respond with a status of 200', () => {
-        expect(this.response.status).toBe(200);
-      });
+    });
+    it('should return a status code 200', () => {
+      expect(this.getOne.status).toBe(200);
+    });
+    it('should contain the two ids of records posted', () => {
+      expect(this.getOne.body).toContain(this.resOne.body._id);
+      expect(this.getOne.body).toContain(this.resTwo.body._id);
+    });
+  });
+
+  describe('Invalid request and response', () => {
+    it('should return a status code 400', () => {
+      return superagent.get(':4000/api/v1/note')
+        .send()
+        .catch(err => {
+          expect(err.status).toBe(404);
+        });
+    });
+    it('should return a 404 given an incorrect path', () => {
+      return superagent.get(':4000/api/v1/doesnotexist')
+        .send({title: '', content: ''})
+        .catch(err => {
+          expect(err.status).toBe(404);
+        });
     });
   });
 });
